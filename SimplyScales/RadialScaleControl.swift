@@ -21,7 +21,6 @@ enum RadialScaleControlMode {
     let segmentsLayer = CALayer()
     let lockLayer = CAShapeLayer()
     let noteNamesLayer = CALayer()
-    var segmentLayers : [CAShapeLayer] = []
     
     var controlMode : RadialScaleControlMode = .Play {
         didSet{
@@ -76,7 +75,7 @@ enum RadialScaleControlMode {
         }
     }
     var pattern:[Int] = [1,0,1,1,0,1,1,0,1,0,1,1]
-    var selectedSegments:NSMutableIndexSet = NSMutableIndexSet(){
+    var selectedSegmentIndecies:NSMutableIndexSet = NSMutableIndexSet(){
         didSet{
             updateSegmentsLayer()
         }
@@ -154,12 +153,11 @@ enum RadialScaleControlMode {
         
         CATransaction.begin()
         CATransaction.setAnimationDuration(0)
-        if(segmentsLayer.sublayers != nil){
-            for layer in segmentsLayer.sublayers{
-                layer.removeFromSuperlayer()
-            }
-        }
-        //For all components
+        
+        //Removes all layers
+        segmentsLayer.sublayers?.removeAll()
+        
+        //For all segments
         for(var i = 0; i < pattern.count; i++){
             let segmentAngle:CGFloat = CGFloat(M_PI * 2) / CGFloat(pattern.count);
             let sAngle:CGFloat = startAngle - segmentAngle/2
@@ -222,7 +220,6 @@ enum RadialScaleControlMode {
                 segment.addSublayer(circle)
             }
             segmentsLayer.addSublayer(segment)
-            segmentLayers.append(segment)
         }
         CATransaction.commit()
         updateSegmentsLayer()
@@ -239,11 +236,9 @@ enum RadialScaleControlMode {
         
         CATransaction.begin()
         CATransaction.setAnimationDuration(0)
-        if(lockLayer.sublayers != nil){
-            for layer in lockLayer.sublayers {
-                layer.removeFromSuperlayer()
-            }
-        }
+        
+        //Removes all layers
+        lockLayer.sublayers?.removeAll()
     
         var primaryRadius = radius - segmentThickness - spacing
         var h:CGFloat = 50;
@@ -281,6 +276,9 @@ enum RadialScaleControlMode {
         noteNamesLayer.anchorPoint = CGPointMake(0.5, 0.5)
         noteNamesLayer.position = CGPointMake(self.frame.size.width/2, self.frame.size.height/2)
         
+        //Removes all layers
+        noteNamesLayer.sublayers?.removeAll()
+        
         updateNoteNamesLayer()
     }
     
@@ -304,7 +302,7 @@ enum RadialScaleControlMode {
                 shiftedIndex -= pattern.count;
             }
             if(pattern[counter] == 1){
-                if(selectedSegments.containsIndex(shiftedIndex)){
+                if(selectedSegmentIndecies.containsIndex(shiftedIndex)){
                     layer.fillColor = self.tintColor.colorWithBrightnessModifier(0.7).CGColor
                 }else{
                     layer.fillColor = self.tintColor.CGColor
@@ -357,20 +355,20 @@ enum RadialScaleControlMode {
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         //Determines how the control should react
         if(controlMode == .Play){
-            var indexes : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
-            indexes.enumerateIndexesUsingBlock { (index, _) in
-                if(!self.selectedSegments.containsIndex(index)){
+            var indecies : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
+            indecies.enumerateIndexesUsingBlock { (index, _) in
+                if(!self.selectedSegmentIndecies.containsIndex(index)){
                     //Play note
                 }
             }
-            selectedSegments = indexes;
+            selectedSegmentIndecies = indecies;
         }else if(controlMode == .Edit){
             var location = touches.anyObject()!.locationInView(self)
-            if(locationIsValid(location) && segmentAtLocation(location) != 0){
-                if(pattern[segmentAtLocation(location)] == 0){
-                    pattern[segmentAtLocation(location)] = 1
+            if(pointIsValid(location) && segmentIndexRelativeToPoint(location) != 0){
+                if(pattern[segmentIndexRelativeToPoint(location)] == 0){
+                    pattern[segmentIndexRelativeToPoint(location)] = 1
                 }else{
-                    pattern[segmentAtLocation(location)] = 0
+                    pattern[segmentIndexRelativeToPoint(location)] = 0
                 }
                 updateSegmentsLayer()
             }
@@ -415,17 +413,6 @@ enum RadialScaleControlMode {
     
     //MARK: Setters
     /**
-    Toggles the segment
-    
-    :param: selected A boolean value that represent whether the segment should be selected
-    :param: segment  The segment being toggled
-    */
-    func setSelected(selected: Bool, forSegmentAtIndex index: Int){
-        selected ? selectedSegments.addIndex(index) : selectedSegments.addIndex(index)
-        updateSegmentsLayer()
-    }
-    
-    /**
     Determines the indexes which are located at every touch location
     
     :param: event A UIEvent
@@ -437,15 +424,21 @@ enum RadialScaleControlMode {
         for touch in event.allTouches()?.allObjects as [UITouch]{
             if(touch.phase != UITouchPhase.Ended){
                 var location = touch.locationInView(self)
-                if(locationIsValid(location)){
-                    indexSet.addIndex(segmentAtLocation(location))
+                if(pointIsValid(location)){
+                    indexSet.addIndex(segmentIndexRelativeToPoint(location))
                 }
             }
         }
     return indexSet;
     }
+    /**
+    Indicates whether a point is valid (within a certain distance from the center)
     
-    func locationIsValid(location:CGPoint) -> Bool{
+    :param: location A point
+    
+    :returns: A bool indicating the validity
+    */
+    func pointIsValid(location:CGPoint) -> Bool{
         var distance = sqrt(pow((self.frame.size.width/2 - location.x), 2.0) + pow((self.frame.size.height/2 - location.y), 2.0));
         if(distance < radius && distance > (radius - segmentThickness - spacing)){
             return true
@@ -456,18 +449,18 @@ enum RadialScaleControlMode {
     
     
     /**
-    Determines a segment index based on the angle between the start angle and some anglular location
+    Determines the coresponding segment index based on the angle between the start angle and the angular position of a point
     
     :param: location A point which will be used to calculate delta theta
     
     :returns: A segment index
     */
-    func segmentAtLocation(location : CGPoint) -> Int {
+    func segmentIndexRelativeToPoint(point : CGPoint) -> Int {
     
         var centerd = CGPointMake(self.frame.size.width/2, self.frame.size.height/2)
     
-        var x : CGFloat = location.x - centerd.x;
-        var y : CGFloat = location.y - centerd.y;
+        var x : CGFloat = point.x - centerd.x;
+        var y : CGFloat = point.y - centerd.y;
         var thetaR = atan(y/x)
         var theta : CGFloat;
         if (x >= 0 && y < 0){
