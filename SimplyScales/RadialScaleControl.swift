@@ -32,7 +32,12 @@ enum RadialScaleControlMode {
             updateLockLayer()
         }
     }
+    /// Indicates whether the controls rotation has been engaged
+    var isRotating : Bool = false
     
+    /// The original location where the user initially touched the view
+    var originalTouchDownLocation : CGPoint = CGPointMake(0, 0)
+
     var spacing:CGFloat = 4 {
         didSet{
             layoutCenterCircleLayer()
@@ -67,10 +72,7 @@ enum RadialScaleControlMode {
     var tonic:Int = 0 {
         didSet{
             //Rotates the segments based on the tonic
-            CATransaction.begin()
-            CATransaction.setAnimationDuration(1)
             segmentsLayer.transform = CATransform3DMakeRotation(CGFloat(M_PI * 2) / CGFloat(pattern.count) * CGFloat(tonic), 0, 0, 1.0)
-            CATransaction.commit()
             updateSegmentsLayer()
         }
     }
@@ -353,7 +355,6 @@ enum RadialScaleControlMode {
     //MARK: Touch Handling
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        //Determines how the control should react
         if(controlMode == .Play){
             var indecies : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
             indecies.enumerateIndexesUsingBlock { (index, _) in
@@ -363,15 +364,8 @@ enum RadialScaleControlMode {
             }
             selectedSegmentIndecies = indecies;
         }else if(controlMode == .Edit){
+            originalTouchDownLocation = touches.anyObject()!.locationInView(self)
             var location = touches.anyObject()!.locationInView(self)
-            if(pointIsValid(location) && segmentIndexRelativeToPoint(location) != 0){
-                if(pattern[segmentIndexRelativeToPoint(location)] == 0){
-                    pattern[segmentIndexRelativeToPoint(location)] = 1
-                }else{
-                    pattern[segmentIndexRelativeToPoint(location)] = 0
-                }
-                updateSegmentsLayer()
-            }
         }else if(controlMode == .Idle){
             //Do nothing
         }
@@ -379,22 +373,45 @@ enum RadialScaleControlMode {
     }
     
     override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
-        //Determines how the control should react
         if(controlMode == .Play){
-            //Do nothing
+            var indecies : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
+            selectedSegmentIndecies = indecies;
         }else if(controlMode == .Edit){
-            //Do nothing
+            isRotating = true
+            var currentLocation : CGPoint = touches.anyObject()!.locationInView(self)
+            var currentTouchedSegmentIndex = segmentIndexRelativeToPoint(currentLocation)
+            var originalTouchedSegmentIndex = segmentIndexRelativeToPoint(originalTouchDownLocation)
+            var distanceFromCenterToCurrentTouchedSegment = sqrt(pow((self.frame.size.width/2 - currentLocation.x), 2.0) + pow((self.frame.size.height/2 - currentLocation.y), 2.0));
+            var distanceFromCenterToOriginalTouchedSegment = sqrt(pow((self.frame.size.width/2 - originalTouchDownLocation.x), 2.0) + pow((self.frame.size.height/2 - originalTouchDownLocation.y), 2.0));
+            if(distanceFromCenterToCurrentTouchedSegment > radius - segmentThickness && distanceFromCenterToOriginalTouchedSegment > radius - segmentThickness && distanceFromCenterToOriginalTouchedSegment < radius){
+                    self.tonic = currentTouchedSegmentIndex;
+                
+                
+            }
         }else if(controlMode == .Idle){
             //Do nothing
         }
     }
     
     override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
-        //Determines how the control should react
         if(controlMode == .Play){
-            //Do nothing
+            var indecies : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
+            selectedSegmentIndecies = indecies;
         }else if(controlMode == .Edit){
-            //Do nothing
+            var location : CGPoint = touches.anyObject()!.locationInView(self)
+            var adjustedSegmentIndex = segmentIndexRelativeToPoint(location) - tonic;
+            while (adjustedSegmentIndex < 0){
+                adjustedSegmentIndex += pattern.count;
+            }
+            if(pointIsValid(location) && adjustedSegmentIndex != 0 && !isRotating){
+                if(pattern[adjustedSegmentIndex] == 0){
+                    pattern[adjustedSegmentIndex] = 1
+                }else{
+                    pattern[adjustedSegmentIndex] = 0
+                }
+                updateSegmentsLayer()
+            }
+            isRotating = false
         }else if(controlMode == .Idle){
             //Do nothing
         }
@@ -480,7 +497,6 @@ enum RadialScaleControlMode {
         }
         theta = theta - startAngle;
         var index : Int = lround(Double(theta) / ((M_PI * 2) / Double(pattern.count)))
-        
         //Range Check
         while(index >= pattern.count) {index -= pattern.count}
         while(index < 0){index += pattern.count}
