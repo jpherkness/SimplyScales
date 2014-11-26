@@ -7,6 +7,60 @@
 //
 
 import UIKit
+//Flat Colors - Random Color Shorthand
+let RandomFlatColor : UIColor = UIColor.randomFlatColor()
+
+//Flat Colors - Light Shades Shorthand
+let FlatBlack : UIColor = UIColor.flatBlackColor()
+let FlatBlue : UIColor = UIColor.flatBlueColor()
+let FlatBrown : UIColor = UIColor.flatBrownColor()
+let FlatCoffee : UIColor = UIColor.flatCoffeeColor()
+let FlatForestGreen : UIColor = UIColor.flatForestGreenColor()
+let FlatGray : UIColor = UIColor.flatGrayColor()
+let FlatGreen : UIColor = UIColor.flatGreenColor()
+let FlatLime : UIColor = UIColor.flatLimeColor()
+let FlatMagenta : UIColor = UIColor.flatMagentaColor()
+let FlatMaroon : UIColor = UIColor.flatMaroonColor()
+let FlatMint : UIColor = UIColor.flatMintColor()
+let FlatNavyBlue : UIColor = UIColor.flatNavyBlueColor()
+let FlatOrange : UIColor = UIColor.flatOrangeColor()
+let FlatPink : UIColor = UIColor.flatPinkColor()
+let FlatPlum : UIColor = UIColor.flatPlumColor()
+let FlatPowderBlue : UIColor = UIColor.flatPowderBlueColor()
+let FlatPurple : UIColor = UIColor.flatPurpleColor()
+let FlatRed : UIColor = UIColor.flatRedColor()
+let FlatSand : UIColor = UIColor.flatSandColor()
+let FlatSkyBlue : UIColor = UIColor.flatSkyBlueColor()
+let FlatTeal : UIColor = UIColor.flatTealColor()
+let FlatWatermelon : UIColor = UIColor.flatWatermelonColor()
+let FlatWhite : UIColor = UIColor.flatWhiteColor()
+let FlatYellow : UIColor = UIColor.flatYellowColor()
+
+//Flat Colors - Dark Shades Shorthand
+let FlatBlackDark : UIColor = UIColor.flatBlackColorDark()
+let FlatBlueDark : UIColor = UIColor.flatBlueColorDark()
+let FlatBrownDark : UIColor = UIColor.flatBrownColorDark()
+let FlatCoffeeDark : UIColor = UIColor.flatCoffeeColorDark()
+let FlatForestGreenDark : UIColor = UIColor.flatForestGreenColorDark()
+let FlatGrayDark : UIColor = UIColor.flatGrayColorDark()
+let FlatGreenDark : UIColor = UIColor.flatGreenColorDark()
+let FlatLimeDark : UIColor = UIColor.flatLimeColorDark()
+let FlatMagentaDark : UIColor = UIColor.flatMagentaColorDark()
+let FlatMaroonDark : UIColor = UIColor.flatMaroonColorDark()
+let FlatMintDark : UIColor = UIColor.flatMintColorDark()
+let FlatNavyBlueDark : UIColor = UIColor.flatNavyBlueColorDark()
+let FlatOrangeDark : UIColor = UIColor.flatOrangeColorDark()
+let FlatPinkDark : UIColor = UIColor.flatPinkColorDark()
+let FlatPlumDark : UIColor = UIColor.flatPlumColorDark()
+let FlatPowderBlueDark : UIColor = UIColor.flatPowderBlueColorDark()
+let FlatPurpleDark : UIColor = UIColor.flatPurpleColorDark()
+let FlatRedDark : UIColor = UIColor.flatRedColorDark()
+let FlatSandDark : UIColor = UIColor.flatSandColorDark()
+let FlatSkyBlueDark : UIColor = UIColor.flatSkyBlueColorDark()
+let FlatTealDark : UIColor = UIColor.flatTealColorDark()
+let FlatWatermelonDark : UIColor = UIColor.flatWatermelonColorDark()
+let FlatWhiteDark : UIColor = UIColor.flatWhiteColorDark()
+let FlatYellowDark : UIColor = UIColor.flatYellowColorDark()
 
 extension UIColor {
     
@@ -216,5 +270,42 @@ extension UIColor {
         } else {
             return self;
         }
+    }
+    
+    class func randomFlatColor() -> UIColor {
+        return UIColor.flatColors()[Int(arc4random_uniform(UInt32(UIColor.flatColors().count)))]
+    }
+    
+    class func flatColors() -> [UIColor]{
+        //return [FlatBlack, FlatBlue, FlatBrown, FlatCoffee, FlatForestGreen, FlatGray, FlatGreen, FlatLime, FlatMagenta, FlatMaroon, FlatMint,FlatNavyBlue, FlatOrange, FlatPink, FlatPlum, FlatPowderBlue, FlatPurple, FlatRed, FlatSand, FlatSkyBlue, FlatTeal, FlatWatermelon, FlatWhite, FlatYellow, FlatBlackDark, FlatBlueDark, FlatBrownDark, FlatCoffeeDark, FlatForestGreenDark,  FlatGrayDark, FlatGreenDark,FlatLimeDark, FlatMagentaDark, FlatMaroonDark, FlatMintDark, FlatNavyBlueDark, FlatOrangeDark, FlatPinkDark, FlatPlumDark, FlatPowderBlueDark, FlatPurpleDark, FlatRedDark, FlatSandDark, FlatSkyBlueDark, FlatTealDark, FlatWatermelonDark, FlatWhiteDark, FlatYellowDark]
+        return [FlatMint, FlatMintDark, FlatGreen, FlatGreenDark, FlatSkyBlue, FlatSkyBlueDark, FlatMagenta, FlatMagentaDark, FlatNavyBlue, FlatNavyBlueDark, FlatYellow, FlatYellowDark, FlatOrange, FlatOrangeDark, FlatRed, FlatRedDark]
+    }
+    
+    class func sortedFlatColors() -> [UIColor]{
+        func hue(color1: UIColor, color2: UIColor) -> Bool {
+            var hue1 : CGFloat = 0
+            var saturation1 : CGFloat = 0
+            var brightness1 : CGFloat = 0
+            var alpha1 : CGFloat = 0
+            color1.getHue(&hue1, saturation: &saturation1, brightness: &brightness1, alpha: &alpha1)
+
+            var hue2 : CGFloat = 0
+            var saturation2 : CGFloat = 0
+            var brightness2 : CGFloat = 0
+            var alpha2 : CGFloat = 0
+            color2.getHue(&hue2, saturation: &saturation2, brightness: &brightness2, alpha: &alpha2)
+            
+            return hue1 > hue2
+        }
+        return sorted(flatColors(), hue)
+    }
+    
+    func getHexStringForColor() -> NSString{
+        var components = CGColorGetComponents(self.CGColor)
+        var r = components[0]
+        var g = components[1]
+        var b = components[2]
+        
+        return NSString(format:"%02X%02X%02X", Int(r * 255), Int(g * 255), Int(b * 255))
     }
 }

@@ -14,7 +14,7 @@ class ModalPresentationController : UIPresentationController {
     
     override init(presentedViewController: UIViewController!, presentingViewController: UIViewController!) {
         super.init(presentedViewController: presentedViewController, presentingViewController: presentingViewController)
-        dimmingView.backgroundColor = UIColor(white: 0.0, alpha: 0.3)
+        dimmingView.backgroundColor = UIColor(white: 0.0, alpha: 0.5)
     }
     
     override func presentationTransitionWillBegin() {
@@ -39,7 +39,7 @@ class ModalPresentationController : UIPresentationController {
     }
     
     override func frameOfPresentedViewInContainerView() -> CGRect {
-        return containerView.bounds.rectByInsetting(dx: 20, dy: 40)
+        return presentedViewController.view.frame
     }
     
     override func containerViewWillLayoutSubviews() {

@@ -15,20 +15,15 @@ class ViewController: UIViewController, RadialScaleControlDelegate, RadialScaleC
     override func viewDidLoad() {
         super.viewDidLoad()
         //Creates a radial scale control and adds it to the view
-        //let radialScaleControl = RadialScaleControl(frame: CGRectMake(self.view.frame.size.width / 2 - 135, self.view.frame.size.height / 2 - 135, 270, 270))
-        //self.view.addSubview(radialScaleControl)
-        //radialScaleControl.tintColor = UIColor.flatSkyBlueColor()
+        let radialScaleControl = RadialScaleControl(frame: CGRectMake(self.view.frame.size.width / 2 - 135, self.view.frame.size.height / 2 - 135, 270, 270))
+        self.view.addSubview(radialScaleControl)
+        radialScaleControl.tintColor = RandomFlatColor
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        let modalViewController = UIViewController()
-        let visualEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .ExtraLight)) as UIVisualEffectView
-        visualEffectView.layer.cornerRadius = 10
-        visualEffectView.layer.masksToBounds = true
-        modalViewController.view = visualEffectView
+        var modalViewController = colorSelectionViewController()
         modalViewController.transitioningDelegate = modalTransitioningDelegate
         modalViewController.modalPresentationStyle = .Custom
-        
         presentViewController(modalViewController, animated: true, completion: nil)
     }
     

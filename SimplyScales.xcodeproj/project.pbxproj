@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C2D0EC61A24F48B00F130DB /* ColorSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2D0EC51A24F48B00F130DB /* ColorSelectionViewController.swift */; };
 		7C36E77519F89DCC0022DF2E /* ModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C36E77419F89DCC0022DF2E /* ModalPresentationController.swift */; };
 		7C36E77719F8AEF30022DF2E /* ModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C36E77619F8AEF30022DF2E /* ModalTransitioningDelegate.swift */; };
 		7C754E3C19F975D5004A34E8 /* ScaleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C754E3B19F975D5004A34E8 /* ScaleType.swift */; };
@@ -32,6 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7C2D0EC51A24F48B00F130DB /* ColorSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSelectionViewController.swift; sourceTree = "<group>"; };
 		7C36E77419F89DCC0022DF2E /* ModalPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalPresentationController.swift; sourceTree = "<group>"; };
 		7C36E77619F8AEF30022DF2E /* ModalTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalTransitioningDelegate.swift; sourceTree = "<group>"; };
 		7C754E3B19F975D5004A34E8 /* ScaleType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScaleType.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				7CCE8AC319F3015D009068BB /* RadialScaleControl.swift */,
 				7CC77DBD19F378CF002680F3 /* UIColor+AdditionalFlatColors.swift */,
 				7CCCA03F19F7E7F60031BA39 /* ScaleTypeViewController.swift */,
+				7C2D0EC51A24F48B00F130DB /* ColorSelectionViewController.swift */,
 				7C36E77419F89DCC0022DF2E /* ModalPresentationController.swift */,
 				7C36E77619F8AEF30022DF2E /* ModalTransitioningDelegate.swift */,
 				7C754E3B19F975D5004A34E8 /* ScaleType.swift */,
@@ -232,6 +235,7 @@
 			files = (
 				7CC77DBE19F378CF002680F3 /* UIColor+AdditionalFlatColors.swift in Sources */,
 				7CCCA04019F7E7F60031BA39 /* ScaleTypeViewController.swift in Sources */,
+				7C2D0EC61A24F48B00F130DB /* ColorSelectionViewController.swift in Sources */,
 				7C36E77519F89DCC0022DF2E /* ModalPresentationController.swift in Sources */,
 				7CCE8AA219F2FBF8009068BB /* ViewController.swift in Sources */,
 				7C754E3C19F975D5004A34E8 /* ScaleType.swift in Sources */,
