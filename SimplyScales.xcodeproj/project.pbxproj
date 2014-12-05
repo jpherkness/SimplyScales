@@ -7,10 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7C23037C1A31FD7D00437E2F /* handle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C23037B1A31FD7D00437E2F /* handle.swift */; };
 		7C2D0EC61A24F48B00F130DB /* ColorSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2D0EC51A24F48B00F130DB /* ColorSelectionViewController.swift */; };
 		7C36E77519F89DCC0022DF2E /* ModalPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C36E77419F89DCC0022DF2E /* ModalPresentationController.swift */; };
 		7C36E77719F8AEF30022DF2E /* ModalTransitioningDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C36E77619F8AEF30022DF2E /* ModalTransitioningDelegate.swift */; };
 		7C754E3C19F975D5004A34E8 /* ScaleType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C754E3B19F975D5004A34E8 /* ScaleType.swift */; };
+		7CBD9ECE1A2FF0440066D602 /* Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBD9ECD1A2FF0440066D602 /* Slider.swift */; };
 		7CC77DBE19F378CF002680F3 /* UIColor+AdditionalFlatColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC77DBD19F378CF002680F3 /* UIColor+AdditionalFlatColors.swift */; };
 		7CCCA04019F7E7F60031BA39 /* ScaleTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCCA03F19F7E7F60031BA39 /* ScaleTypeViewController.swift */; };
 		7CCE8AA019F2FBF8009068BB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCE8A9F19F2FBF8009068BB /* AppDelegate.swift */; };
@@ -33,10 +35,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7C23037B1A31FD7D00437E2F /* handle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = handle.swift; sourceTree = "<group>"; };
 		7C2D0EC51A24F48B00F130DB /* ColorSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorSelectionViewController.swift; sourceTree = "<group>"; };
 		7C36E77419F89DCC0022DF2E /* ModalPresentationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalPresentationController.swift; sourceTree = "<group>"; };
 		7C36E77619F8AEF30022DF2E /* ModalTransitioningDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ModalTransitioningDelegate.swift; sourceTree = "<group>"; };
 		7C754E3B19F975D5004A34E8 /* ScaleType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScaleType.swift; sourceTree = "<group>"; };
+		7CBD9ECD1A2FF0440066D602 /* Slider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slider.swift; sourceTree = "<group>"; };
 		7CC77DBD19F378CF002680F3 /* UIColor+AdditionalFlatColors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+AdditionalFlatColors.swift"; sourceTree = "<group>"; };
 		7CCCA03F19F7E7F60031BA39 /* ScaleTypeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScaleTypeViewController.swift; sourceTree = "<group>"; };
 		7CCE8A9A19F2FBF8009068BB /* SimplyScales.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SimplyScales.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +105,8 @@
 				7CC77DBD19F378CF002680F3 /* UIColor+AdditionalFlatColors.swift */,
 				7CCCA03F19F7E7F60031BA39 /* ScaleTypeViewController.swift */,
 				7C2D0EC51A24F48B00F130DB /* ColorSelectionViewController.swift */,
+				7CBD9ECD1A2FF0440066D602 /* Slider.swift */,
+				7C23037B1A31FD7D00437E2F /* handle.swift */,
 				7C36E77419F89DCC0022DF2E /* ModalPresentationController.swift */,
 				7C36E77619F8AEF30022DF2E /* ModalTransitioningDelegate.swift */,
 				7C754E3B19F975D5004A34E8 /* ScaleType.swift */,
@@ -235,8 +241,10 @@
 			files = (
 				7CC77DBE19F378CF002680F3 /* UIColor+AdditionalFlatColors.swift in Sources */,
 				7CCCA04019F7E7F60031BA39 /* ScaleTypeViewController.swift in Sources */,
+				7C23037C1A31FD7D00437E2F /* handle.swift in Sources */,
 				7C2D0EC61A24F48B00F130DB /* ColorSelectionViewController.swift in Sources */,
 				7C36E77519F89DCC0022DF2E /* ModalPresentationController.swift in Sources */,
+				7CBD9ECE1A2FF0440066D602 /* Slider.swift in Sources */,
 				7CCE8AA219F2FBF8009068BB /* ViewController.swift in Sources */,
 				7C754E3C19F975D5004A34E8 /* ScaleType.swift in Sources */,
 				7CCE8AA019F2FBF8009068BB /* AppDelegate.swift in Sources */,

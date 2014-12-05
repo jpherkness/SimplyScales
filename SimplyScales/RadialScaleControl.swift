@@ -310,7 +310,7 @@ enum RadialScaleControlMode {
                     layer.fillColor = self.tintColor.CGColor
                 }
             }else{
-                layer.fillColor = self.tintColor.colorWithAlphaComponent(0.15).CGColor;
+                layer.fillColor = self.tintColor.colorWithAlphaComponent(0.15).CGColor
             }
             counter = counter + 1
         }
@@ -502,4 +502,5 @@ enum RadialScaleControlMode {
         while(index < 0){index += pattern.count}
         return index
     }
+    
 }

@@ -14,14 +14,20 @@ class ViewController: UIViewController, RadialScaleControlDelegate, RadialScaleC
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //Creates a radial scale control and adds it to the view
-        let radialScaleControl = RadialScaleControl(frame: CGRectMake(self.view.frame.size.width / 2 - 135, self.view.frame.size.height / 2 - 135, 270, 270))
-        self.view.addSubview(radialScaleControl)
-        radialScaleControl.tintColor = RandomFlatColor
+        
+        //create the radial scal control
+        var rsc = RadialScaleControl(frame: CGRectMake(self.view.center.x - 150, self.view.center.y - 150, 300, 300))
+        rsc.tintColor = FlatSkyBlue
+        //add views to the controller 
+        self.view.addSubview(rsc);
+        
+        var slider = Slider(frame: CGRectMake(0, 60, self.view.frame.width, 50))
+        slider.tintColor = FlatSkyBlue
+        self.view.addSubview(slider)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        var modalViewController = colorSelectionViewController()
+        var modalViewController = settingsViewController()
         modalViewController.transitioningDelegate = modalTransitioningDelegate
         modalViewController.modalPresentationStyle = .Custom
         presentViewController(modalViewController, animated: true, completion: nil)

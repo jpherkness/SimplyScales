@@ -8,50 +8,43 @@
 
 import UIKit
 
-class colorSelectionViewController : UIViewController {
+class settingsViewController : UIViewController {
     override init() {
         super.init()
-        
-        self.view.frame = CGRectMake(20, self.view.frame.height/2 - 190, self.view.frame.width - 40, 380)
-        self.view.layer.masksToBounds = true
-        self.view.layer.cornerRadius = 10
-        self.view.backgroundColor = UIColor.whiteColor()
-        
-        var colorsPerRow = 4
-        var spacing : CGFloat = 20
-        var size = (self.view.frame.size.width - CGFloat(colorsPerRow + 1) * spacing)/CGFloat(colorsPerRow)
-        
-        var scrollView = UIScrollView(frame : CGRectMake(0, 0, self.view.frame.width, self.view.frame.height))
-        scrollView.contentSize = CGSizeMake(self.view.frame.width, CGFloat(UIColor.flatColors().count/colorsPerRow) * (size + spacing) + spacing)
-        scrollView.bounces = false
-        self.view.addSubview(scrollView)
-        
-        var x : CGFloat = spacing
-        var y : CGFloat = spacing
-        for color in UIColor.flatColors() as [UIColor]{
-            var colorButton = UIButton(frame: CGRectMake(x, y , size, size))
-            colorButton.backgroundColor = color
-            colorButton.addTarget(self, action: "colorSelected:", forControlEvents: UIControlEvents.TouchUpInside)
-            colorButton.layer.cornerRadius = 6
-            colorButton.layer.masksToBounds = true
-            scrollView.addSubview(colorButton)
-            
-            x += size + spacing
-            if(x + size > self.view.frame.size.width){
-                x = spacing
-                y += size + spacing
-            }
-        }
     }
-    func colorSelected(sender : UIButton){
+    
+    override func viewDidLoad() {
+        //Set the frame of the view
+        self.view.frame = CGRectMake(30, self.view.frame.height/2 - 200, self.view.frame.size.width - 60, 400)
         
+        //Set the background views appearance
+        self.view.backgroundColor = UIColor.whiteColor()
+        self.view.layer.masksToBounds = true
+        self.view.layer.cornerRadius = 3
+        
+        //Create a navigationBar and add it to the view
+        var navBar : UINavigationBar = UINavigationBar(frame: CGRectMake(0, 0, self.view.frame.width, 45))
+        navBar.barTintColor = UIColor(red: 238/255, green: 238/255, blue: 238/255, alpha: 1.0)
+        navBar.translucent = false
+        navBar.titleTextAttributes = [NSForegroundColorAttributeName:UIColor(red: 196/255, green: 196/255, blue: 196/255, alpha: 1.0)]
+        navBar.tintColor = UIColor(red: 196/255, green: 196/255, blue: 196/255, alpha: 1.0)
+        navBar.clipsToBounds = true
+        
+        //Add a new navigation item with a title to the new nav bar
+        var title = UINavigationItem()
+        title.title = "Settings"
+        navBar.setItems([title], animated: false)
+        
+        //Add a cancel button
+        var dismiss = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Cancel, target: nil, action: nil)
+        self.view.addSubview(navBar)
+    }
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-    }
-    
-    override init(nibName nibNameOrNil: String!, bundle nibBundleOrNil: NSBundle!) {
-        super.init(nibName: nil, bundle: nil)
     }
 }
