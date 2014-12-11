@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Slider : UIControl {
+class CustomSlider : UIControl {
     var value : CGFloat = 0.5 {
         didSet{
             //First we check the value to ensure it is within the bounds (0.0 -> 1.0)
@@ -19,14 +19,12 @@ class Slider : UIControl {
             updateLayers()
         }
     }
-    var sidePadding : CGFloat = 30
     let leftBarLayer = CAShapeLayer()
     let rightBarLayer = CAShapeLayer()
     let handleLayer = Handle()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         //Add layers
         self.layer.addSublayer(leftBarLayer)
         self.layer.addSublayer(rightBarLayer)
@@ -49,8 +47,7 @@ class Slider : UIControl {
         var point = touch.locationInView(self) //Location of touch
         
         //We only care about the horizontal component
-        var x = point.x - sidePadding
-        value = x / (self.frame.width - 2 * sidePadding)
+        value = point.x / self.frame.width
         return true
     }
     
@@ -60,22 +57,22 @@ class Slider : UIControl {
         CATransaction.setAnimationDuration(0)
         
         let leftBarLayerPath = CGPathCreateMutable()
-        CGPathMoveToPoint(leftBarLayerPath, nil, sidePadding, self.frame.height/2)
-        CGPathAddLineToPoint(leftBarLayerPath, nil, (self.frame.width - 2 * sidePadding) * value + sidePadding, self.frame.height/2)
+        CGPathMoveToPoint(leftBarLayerPath, nil, 0, self.frame.height/2)
+        CGPathAddLineToPoint(leftBarLayerPath, nil, self.frame.width * value, self.frame.height/2)
         leftBarLayer.path = leftBarLayerPath
         leftBarLayer.strokeColor = self.tintColor.CGColor
         leftBarLayer.lineWidth = 4
         leftBarLayer.lineCap = kCALineCapRound
         
         let rightBarLayerPath = CGPathCreateMutable()
-        CGPathMoveToPoint(rightBarLayerPath, nil, (self.frame.width - 2 * sidePadding) * value + sidePadding, self.frame.height/2)
-        CGPathAddLineToPoint(rightBarLayerPath, nil, self.frame.width - sidePadding, self.frame.height/2)
+        CGPathMoveToPoint(rightBarLayerPath, nil, self.frame.width * value, self.frame.height/2)
+        CGPathAddLineToPoint(rightBarLayerPath, nil, self.frame.width, self.frame.height/2)
         rightBarLayer.path = rightBarLayerPath
         rightBarLayer.strokeColor = self.tintColor.colorWithAlphaComponent(0.15).CGColor
         rightBarLayer.lineWidth = 4
         rightBarLayer.lineCap = kCALineCapRound
         
-        handleLayer.position = CGPointMake((self.frame.width - 2 * sidePadding) * value + sidePadding, self.frame.size.height/2)
+        handleLayer.position = CGPointMake(self.frame.width * value, self.frame.size.height/2)
         handleLayer.strokeColor = UIColor.whiteColor().CGColor
         handleLayer.fillColor = self.tintColor.CGColor
         CATransaction.commit()
@@ -88,5 +85,4 @@ class Slider : UIControl {
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-
 }

@@ -20,7 +20,6 @@ class Handle : CAShapeLayer {
         let handlePath = CGPathCreateMutable()
         CGPathAddEllipseInRect(handlePath, nil, CGRectMake(self.bounds.size.width/2 - size/2, self.bounds.size.height/2 - size/2, size, size))
         self.path = handlePath
-        self.lineCap = kCALineCapRound
         self.lineWidth = 2
     }
 

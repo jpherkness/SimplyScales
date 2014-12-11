@@ -15,18 +15,18 @@ enum RadialScaleControlMode {
     case Edit
 }
 
-@IBDesignable class RadialScaleControl : UIView, RadialScaleControlDelegate, RadialScaleControlDatasource {
+@IBDesignable class RadialScaleControl : UIControl, RadialScaleControlDelegate, RadialScaleControlDatasource {
     //MARK: Variables
     let centerCircleLayer = CAShapeLayer()
     let segmentsLayer = CALayer()
     let lockLayer = CAShapeLayer()
     let noteNamesLayer = CALayer()
     
-    var controlMode : RadialScaleControlMode = .Play {
+    var controlMode : RadialScaleControlMode = RadialScaleControlMode.Play {
         didSet{
-            if(controlMode == .Play){
+            if(controlMode == RadialScaleControlMode.Play){
                 self.multipleTouchEnabled = true
-            }else if (controlMode == .Edit){
+            }else if (controlMode == RadialScaleControlMode.Edit){
                 self.multipleTouchEnabled = false
             }
             updateLockLayer()
@@ -54,8 +54,7 @@ enum RadialScaleControlMode {
             layoutNoteNamesLayer()
         }
     }
-    //125
-    var radius:CGFloat = 135 {
+    var radius:CGFloat = 100 {
         didSet{
             layoutCenterCircleLayer()
             layoutSegmentsLayer()
@@ -71,9 +70,12 @@ enum RadialScaleControlMode {
     
     var tonic:Int = 0 {
         didSet{
+            //range check
+            while(tonic > 12){ tonic -= 12 }
+            while(tonic < 0){ tonic += 12 }
+            
             //Rotates the segments based on the tonic
             segmentsLayer.transform = CATransform3DMakeRotation(CGFloat(M_PI * 2) / CGFloat(pattern.count) * CGFloat(tonic), 0, 0, 1.0)
-            updateSegmentsLayer()
         }
     }
     var pattern:[Int] = [1,0,1,1,0,1,1,0,1,0,1,1]
@@ -82,35 +84,32 @@ enum RadialScaleControlMode {
             updateSegmentsLayer()
         }
     }
-    
     override var frame: CGRect {
         didSet {
-            initialize()
+            layoutAll()
+            (frame.width > frame.height) ? (radius = frame.height/2) : (radius = frame.width/2)
         }
     }
     // MARK: Initialization
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        layoutAll()
-    }
-    
-    required init(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-    
-    func initialize(){
-        //Add Layers
+        
+        //Add Each Layer
         layer.addSublayer(centerCircleLayer)
         layer.addSublayer(segmentsLayer)
         layer.addSublayer(lockLayer)
         layer.addSublayer(noteNamesLayer)
         
-        //Layout Layers
+        //Layout Each Layer
         layoutCenterCircleLayer()
         layoutSegmentsLayer()
         layoutLockLayer()
         layoutNoteNamesLayer()
+    }
+
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setTranslatesAutoresizingMaskIntoConstraints(false)
     }
     
     func updateAll(){
@@ -128,7 +127,6 @@ enum RadialScaleControlMode {
     }
     
     // MARK: Layer Methods
-    
     /**
     Layout the center circle layer.
     */
@@ -256,14 +254,14 @@ enum RadialScaleControlMode {
         
         //Path
         let p = CGPathCreateMutable();
-        CGPathAddArc(p, nil, self.frame.size.width/2, self.frame.size.height/2, primaryRadius, sAngle, eAngle, false)
+        CGPathAddEllipseInRect(p, nil, CGRectMake(self.frame.width/2 - 30, self.frame.height/2 + radius - segmentThickness - spacing - 10 - 60, 60, 60))
         lockLayer.path = p
         
         //Apperence
-        lockLayer.fillColor = UIColor.blackColor().colorWithAlphaComponent(0.05).CGColor
+        lockLayer.fillColor = UIColor.whiteColor().colorWithAlphaComponent(0.05).CGColor
         
         var layer = CALayer()
-        layer.frame = CGRectMake(self.frame.size.width/2 - 13, self.frame.size.height/2 - 13 + primaryRadius - h/2, 26, 26)
+        layer.frame = CGRectMake(self.frame.width/2 - 30, self.frame.height/2 + radius - segmentThickness - spacing - 10 - 60, 60, 60).rectByInsetting(dx: 16, dy: 16)
         lockLayer.addSublayer(layer)
         CATransaction.commit()
         
@@ -305,7 +303,7 @@ enum RadialScaleControlMode {
             }
             if(pattern[counter] == 1){
                 if(selectedSegmentIndecies.containsIndex(shiftedIndex)){
-                    layer.fillColor = self.tintColor.colorWithBrightnessModifier(0.7).CGColor
+                    layer.fillColor = self.tintColor.colorWithSaturationMultiplier(0.7).CGColor
                 }else{
                     layer.fillColor = self.tintColor.CGColor
                 }
@@ -327,9 +325,9 @@ enum RadialScaleControlMode {
         if(lockLayer.sublayers != nil){
             for layer in lockLayer.sublayers as [CALayer]{
                 if(controlMode == RadialScaleControlMode.Play){
-                    layer.contents = UIImage(named: "Icon_Lock")?.CGImage
+                    layer.contents = UIImage(named: "Icon_Unlock")?.CGImage
                 }else if(controlMode == RadialScaleControlMode.Edit){
-                    layer.contents = UIImage(named:"Icon_Unlock")?.CGImage
+                    layer.contents = UIImage(named:"Icon_Lock")?.CGImage
                 }
             }
         }
@@ -354,7 +352,10 @@ enum RadialScaleControlMode {
     
     //MARK: Touch Handling
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    override func beginTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
+        if(controlMode == .Idle){
+            return false
+        }
         if(controlMode == .Play){
             var indecies : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
             indecies.enumerateIndexesUsingBlock { (index, _) in
@@ -364,71 +365,93 @@ enum RadialScaleControlMode {
             }
             selectedSegmentIndecies = indecies;
         }else if(controlMode == .Edit){
-            originalTouchDownLocation = touches.anyObject()!.locationInView(self)
-            var location = touches.anyObject()!.locationInView(self)
-        }else if(controlMode == .Idle){
-            //Do nothing
+            originalTouchDownLocation = touch.locationInView(self)
+            var location = touch.locationInView(self)
+        }
+        if(CGPathContainsPoint(lockLayer.path, nil, touch.locationInView(self), false)){
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0)
+            lockLayer.fillColor = UIColor.whiteColor().colorWithAlphaComponent(0.15).CGColor
+            CATransaction.commit()
         }
         
+        return true
     }
     
-    override func touchesMoved(touches: NSSet, withEvent event: UIEvent) {
+    override func continueTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) -> Bool {
         if(controlMode == .Play){
             var indecies : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
             selectedSegmentIndecies = indecies;
         }else if(controlMode == .Edit){
-            isRotating = true
-            var currentLocation : CGPoint = touches.anyObject()!.locationInView(self)
+            var currentLocation : CGPoint = touch.locationInView(self)
             var currentTouchedSegmentIndex = segmentIndexRelativeToPoint(currentLocation)
             var originalTouchedSegmentIndex = segmentIndexRelativeToPoint(originalTouchDownLocation)
-            var distanceFromCenterToCurrentTouchedSegment = sqrt(pow((self.frame.size.width/2 - currentLocation.x), 2.0) + pow((self.frame.size.height/2 - currentLocation.y), 2.0));
-            var distanceFromCenterToOriginalTouchedSegment = sqrt(pow((self.frame.size.width/2 - originalTouchDownLocation.x), 2.0) + pow((self.frame.size.height/2 - originalTouchDownLocation.y), 2.0));
-            if(distanceFromCenterToCurrentTouchedSegment > radius - segmentThickness && distanceFromCenterToOriginalTouchedSegment > radius - segmentThickness && distanceFromCenterToOriginalTouchedSegment < radius){
-                    self.tonic = currentTouchedSegmentIndex;
-                
-                
+            if(currentTouchedSegmentIndex != originalTouchedSegmentIndex){
+                isRotating = true
+                var distanceFromCenterToCurrentTouchedSegment = sqrt(pow((self.frame.size.width/2 - currentLocation.x), 2.0) + pow((self.frame.size.height/2 - currentLocation.y), 2.0));
+                var distanceFromCenterToOriginalTouchedSegment = sqrt(pow((self.frame.size.width/2 - originalTouchDownLocation.x), 2.0) + pow((self.frame.size.height/2 - originalTouchDownLocation.y), 2.0));
+                //if(distanceFromCenterToCurrentTouchedSegment > radius - segmentThickness && distanceFromCenterToOriginalTouchedSegment > radius - segmentThickness && distanceFromCenterToOriginalTouchedSegment < radius){
+                    tonic += currentTouchedSegmentIndex - originalTouchedSegmentIndex
+                    originalTouchDownLocation = currentLocation
+                //}
             }
-        }else if(controlMode == .Idle){
-            //Do nothing
         }
+        
+        if(CGPathContainsPoint(lockLayer.path, nil, touch.locationInView(self), false) && !isRotating){
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0)
+            lockLayer.fillColor = UIColor.whiteColor().colorWithAlphaComponent(0.15).CGColor
+            CATransaction.commit()
+        }else{
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0)
+            lockLayer.fillColor = UIColor.whiteColor().colorWithAlphaComponent(0.05).CGColor
+            CATransaction.commit()
+        }
+        
+        return true
     }
     
-    override func touchesEnded(touches: NSSet, withEvent event: UIEvent) {
+    override func endTrackingWithTouch(touch: UITouch, withEvent event: UIEvent) {
         if(controlMode == .Play){
             var indecies : NSMutableIndexSet = getValidIndexesForAllTouchesInEvent(event);
             selectedSegmentIndecies = indecies;
         }else if(controlMode == .Edit){
-            var location : CGPoint = touches.anyObject()!.locationInView(self)
+            var location : CGPoint = touch.locationInView(self)
             var adjustedSegmentIndex = segmentIndexRelativeToPoint(location) - tonic;
             while (adjustedSegmentIndex < 0){
                 adjustedSegmentIndex += pattern.count;
             }
             if(pointIsValid(location) && adjustedSegmentIndex != 0 && !isRotating){
-                if(pattern[adjustedSegmentIndex] == 0){
-                    pattern[adjustedSegmentIndex] = 1
-                }else{
-                    pattern[adjustedSegmentIndex] = 0
-                }
+                (pattern[adjustedSegmentIndex] == 0) ? (pattern[adjustedSegmentIndex] = 1) : (pattern[adjustedSegmentIndex] = 0)
                 updateSegmentsLayer()
             }
             isRotating = false
-        }else if(controlMode == .Idle){
-            //Do nothing
         }
         
         //Toggles the controlMode
-        if (CGPathContainsPoint(lockLayer.path, nil, touches.anyObject()!.locationInView(self), true)) {
+        if (CGPathContainsPoint(lockLayer.path, nil, touch.locationInView(self), true)) {
             // This touch is in this shape layer
             if(controlMode == .Play){
                 controlMode = .Edit
+                
+                var view = UIView(frame: self.superview!.frame)
+                view.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.9)
+                view.tag = 999
+                self.superview!.insertSubview(view, belowSubview: self)
             }else if(controlMode == .Edit){
                 controlMode = .Play
+                self.superview!.viewWithTag(999)?.removeFromSuperview()
             }
+            CATransaction.begin()
+            CATransaction.setAnimationDuration(0)
+            lockLayer.fillColor = UIColor.whiteColor().colorWithAlphaComponent(0.05).CGColor
+            CATransaction.commit()
         }
         updateLockLayer()
     }
     
-    //MARK: Setters
+    //MARK: Setter Methods
     /**
     Determines the indexes which are located at every touch location
     
@@ -448,6 +471,7 @@ enum RadialScaleControlMode {
         }
     return indexSet;
     }
+    
     /**
     Indicates whether a point is valid (within a certain distance from the center)
     
@@ -463,7 +487,6 @@ enum RadialScaleControlMode {
             return false
         }
     }
-    
     
     /**
     Determines the coresponding segment index based on the angle between the start angle and the angular position of a point

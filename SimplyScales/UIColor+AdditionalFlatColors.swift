@@ -259,14 +259,27 @@ extension UIColor {
         return UIColor(hue: 40/360, saturation: 100/100, brightness: 100/100, alpha: 1.0)
     }
     
-    func colorWithBrightnessModifier(modifier: CGFloat) -> UIColor {
+    func colorWithBrightnessMultiplier(multiplier: CGFloat) -> UIColor {
         var hue : CGFloat = 0
         var saturation : CGFloat = 0
         var brightness : CGFloat = 0
         var alpha : CGFloat = 0
         
         if getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
-            return UIColor(hue: hue, saturation: saturation, brightness: brightness * modifier, alpha: alpha)
+            return UIColor(hue: hue, saturation: saturation, brightness: brightness * multiplier, alpha: alpha)
+        } else {
+            return self;
+        }
+    }
+    
+    func colorWithSaturationMultiplier(multiplier: CGFloat) -> UIColor {
+        var hue : CGFloat = 0
+        var saturation : CGFloat = 0
+        var brightness : CGFloat = 0
+        var alpha : CGFloat = 0
+        
+        if getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha) {
+            return UIColor(hue: hue, saturation: saturation * multiplier, brightness: brightness, alpha: alpha)
         } else {
             return self;
         }

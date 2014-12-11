@@ -15,22 +15,16 @@ class ViewController: UIViewController, RadialScaleControlDelegate, RadialScaleC
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //create the radial scal control
-        var rsc = RadialScaleControl(frame: CGRectMake(self.view.center.x - 150, self.view.center.y - 150, 300, 300))
-        rsc.tintColor = FlatSkyBlue
-        //add views to the controller 
-        self.view.addSubview(rsc);
-        
-        var slider = Slider(frame: CGRectMake(0, 60, self.view.frame.width, 50))
-        slider.tintColor = FlatSkyBlue
-        self.view.addSubview(slider)
+        //add the radial scale control
+        var rsc = RadialScaleControl(frame: CGRectMake(self.view.frame.width / 10, self.view.frame.height - 9 * self.view.frame.width / 10, 8 * self.view.frame.width / 10, 8 * self.view.frame.width / 10))
+        self.view .addSubview(rsc)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        var modalViewController = settingsViewController()
-        modalViewController.transitioningDelegate = modalTransitioningDelegate
-        modalViewController.modalPresentationStyle = .Custom
-        presentViewController(modalViewController, animated: true, completion: nil)
+        //var modalViewController = settingsViewController()
+        //modalViewController.transitioningDelegate = modalTransitioningDelegate
+        //modalViewController.modalPresentationStyle = .Custom
+        //presentViewController(modalViewController, animated: true, completion: nil)
     }
     
     override func prefersStatusBarHidden() -> Bool {
